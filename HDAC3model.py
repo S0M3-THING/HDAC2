@@ -24,7 +24,7 @@ tf.random.set_seed(42)
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 # Read data
-df = pd.read_csv('HDAC2.csv')
+df = pd.read_csv('HDAC3.csv')
 
 # Encode categorical variables to numbers
 label_encoders = {}
@@ -40,9 +40,13 @@ X = df[features]
 cancerstage = LabelEncoder()
 y = cancerstage.fit_transform(df['ajcc_pathologic_stage'])
 
+
+
 # Fixing the class imbalance using SMOTE this time instead of ROS
 smote = SMOTE(random_state=42, k_neighbors=min(3, min(np.bincount(y)) - 1))
 X_resampled, y_resampled = smote.fit_resample(X, y)
+
+
 
 # Split data into training and testing
 X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42, stratify=y_resampled)
@@ -132,9 +136,8 @@ print(classification_report(y_test, y_pred, target_names=cancerstage.classes_))
 print("\nAccuracy per class:")
 for i, class_label in enumerate(cancerstage.classes_):
     classindex = (y_test == i)
-    if np.sum(classindex) > 0:  # Check if class exists in test set
-        class_accuracy = accuracy_score(y_test[classindex], y_pred[classindex])
-        print(f"{class_label}: {class_accuracy:.4f}")
+    class_accuracy = accuracy_score(y_test[classindex], y_pred[classindex])
+    print(f"{class_label}: {class_accuracy:.4f}")
 
 cm = confusion_matrix(y_test, y_pred)
 plt.figure(figsize=(10, 8))
@@ -159,7 +162,7 @@ for i in range(classes):
 plt.figure(figsize=(12, 8))
 colors = ['blue', 'orange', 'green', 'red']
 for i in range(classes):
-    plt.plot(fpr[i], tpr[i], color=colors[i % len(colors)], lw=2,
+    plt.plot(fpr[i], tpr[i], color=colors[i], lw=2,
             label=f'{cancerstage.classes_[i]} (AUC = {roc_auc[i]:.2f})')
 
 plt.plot([0, 1], [0, 1], 'k--', lw=2)
