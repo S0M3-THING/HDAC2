@@ -7,6 +7,6 @@ Virtual environment recommended
 
 Setup
 1.Clone Repository
-2.Create and activate virtual environment
+2.Create and activate conda virtual environment
 3.Install dependencies from requirements.txt (pip install -r requirements.txt)
 4.Run final.py
