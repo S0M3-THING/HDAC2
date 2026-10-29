@@ -52,6 +52,27 @@ Run scripts from the repository root so their relative CSV paths resolve correct
 
 `final.py` drops rows with missing values before selecting features. Its SMOTE and stratified splits require enough examples in each target class. Single-sample predictions must use race and gender categories seen during training.
 
+## Check input before training
+
+The standard-library-only checker runs without TensorFlow or pandas:
+
+```bash
+python validate_data.py
+python validate_data.py /path/to/input.csv
+```
+
+It checks required columns, row widths, blank required values, finite numeric inputs, and basic target-class counts. It accepts `mean.x` or `mean2`, as supported by `final.py`. Diagnostics identify rows and fields without printing patient values. Exit status is 0 when these checks pass and 1 when issues are found or the file cannot be read.
+
+This is a preliminary check, not a replacement for preprocessing: it does not reproduce pandas' missing-value rules or `dropna()` across every column, and it cannot guarantee that SMOTE, splitting, or training will succeed.
+
+Run the checker tests with:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+These tests cover the input checker only, not the training pipeline or model quality.
+
 ## Run the HDAC2 pipeline
 
 After resolving the dependencies:
@@ -67,4 +88,4 @@ The pipeline trains a model, prints classification metrics, displays training-hi
 - The code is experimental; reported metrics should not be treated as validated clinical performance.
 - In the main pipeline, SMOTE runs before the train/test split. This can leak information into evaluation and should be addressed before drawing conclusions from the scores.
 - `HDAC23model.py` references `X.mean()` while assigning `X`, so that variant needs a code fix before use; it also requires the absent `HDAC3.csv`.
-- There is no automated test suite or CI workflow in this repository. Full training depends on a working scientific Python environment and suitable data.
+- The input checker has automated tests, but the training pipeline has no automated coverage or CI workflow. Full training depends on a working scientific Python environment and suitable data.
