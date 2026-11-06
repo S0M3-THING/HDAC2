@@ -10,7 +10,7 @@ def validate_data(path):
     issues = []
     stages = Counter()
     with open(path, newline='', encoding='utf-8-sig') as stream:
-        reader = csv.DictReader(stream)
+        reader = csv.DictReader(stream, strict=True)
         fields = reader.fieldnames or []
         required = {'race', 'gender', 'age_at_index', 'ajcc_pathologic_stage'}
         missing = required - set(fields)

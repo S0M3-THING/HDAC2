@@ -61,7 +61,7 @@ python validate_data.py
 python validate_data.py /path/to/input.csv
 ```
 
-It checks required columns, row widths, blank required values, finite numeric inputs, and basic target-class counts. It accepts `mean.x` or `mean2`, as supported by `final.py`. Diagnostics identify rows and fields without printing patient values. Exit status is 0 when these checks pass and 1 when issues are found or the file cannot be read.
+It checks CSV quoting, required columns, row widths, blank required values, finite numeric inputs, and basic target-class counts. It accepts `mean.x` or `mean2`, as supported by `final.py`. Diagnostics identify rows and fields without printing patient values. Exit status is 0 when these checks pass and 1 when issues are found or the file cannot be read.
 
 This is a preliminary check, not a replacement for preprocessing: it does not reproduce pandas' missing-value rules or `dropna()` across every column, and it cannot guarantee that SMOTE, splitting, or training will succeed.
 

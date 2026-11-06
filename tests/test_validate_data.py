@@ -56,5 +56,23 @@ class InputChecks(unittest.TestCase):
         self.assertNotIn('Traceback', result.stderr)
 
 
+    def test_cli_rejects_unterminated_quoted_field(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'malformed.csv'
+            with path.open('w', newline='') as stream:
+                writer = csv.writer(stream)
+                writer.writerow(['mean.x', 'race', 'gender', 'age_at_index', 'ajcc_pathologic_stage'])
+                writer.writerows(self.valid_rows()[:-1])
+                stream.write('0.5,example-race,example-gender,50,"B')
+            result = subprocess.run(
+                [sys.executable, 'validate_data.py', str(path)],
+                capture_output=True, text=True,
+                cwd=Path(__file__).resolve().parents[1],
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('Unable to read CSV', result.stdout)
+        self.assertNotIn('Traceback', result.stderr)
+
+
 if __name__ == '__main__':
     unittest.main()
